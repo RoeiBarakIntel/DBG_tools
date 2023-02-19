@@ -3,7 +3,9 @@ import subprocess
 import datetime
 import time
 import os
+from tqdm import tqdm
 
+WAIT = 60
 OS_IP = '10.23.74.39'
 AMT_IP = '10.23.74.6'
 CONSOLE_IP = '10.23.74.1'
@@ -75,7 +77,13 @@ try:
                 file.write(response + '\t' + today + f"{i} minutes past\n")
                 winsound.Beep(700, 18000)
         # Clearing the Screen
-        time.sleep(60)
+
+        with tqdm(total=WAIT, desc=f"Time remaining: {WAIT} seconds") as pbar:
+            for k in range(WAIT, 0, -1):
+                pbar.update(1)
+                pbar.set_description(f"Time remaining: {k} seconds")
+                time.sleep(1)
+
         os.system('cls')
         if i < 60:
             print(f"{i} minutes past")
@@ -95,22 +103,3 @@ except Exception as e:
 
 file.close()
 
-# print(f"{today:%B %d, %Y, %H, %M, %S}")
-"""  
-Check connectivity with AMT
-    try:
-        response = subprocess.check_output(
-            [PING_COMMAND, AMT_IP, PING_INTERFACE, CONSOLE_IP],
-            stderr=subprocess.STDOUT,  # get all output
-            universal_newlines=True  # return string not bytes
-        )
-    except subprocess.CalledProcessError:
-        response = None
-    if 'TTL' not in response:
-        if 'Request timed out' in response:
-            response = f'[AMT] {AMT_IP} Request timed out'
-        else:
-            response = f'[AMT] {AMT_IP} Unreachable'
-        break
-
-"""
